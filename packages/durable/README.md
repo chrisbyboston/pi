@@ -168,12 +168,17 @@ Each call runs as its own durable task. Its intent is committed before `execute(
 A later extension's tool with the same name replaces an earlier one where both are selected, and `wrapTool()` decorates whichever tool won:
 
 ```typescript
+import { defineExtension, wrapTool } from "@earendil-works/pi-durable";
+import { createBashTool } from "@earendil-works/pi-durable/tools";
+
 const Venv = defineExtension({ name: "venv", tools: [createBashTool({ commandPrefix: "source .venv/bin/activate" })] });
 const Timing = defineExtension({
 	name: "timing",
 	wraps: [wrapTool(createBashTool(), (bash) => ({ ...bash, execute: (args, api, ctx) => timed(() => bash.execute(args, api, ctx)) }))],
 });
 ```
+
+Here, `timed()` is an application-defined helper that measures execution time and returns the callback's result; it is not provided by the library.
 
 ## System Prompt
 
