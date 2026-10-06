@@ -96,6 +96,9 @@ const RETRYABLE_PROVIDER_ERROR_PATTERN = buildProviderErrorPattern([
 	"you can retry your request",
 	"try your request again",
 	"please retry your request",
+	// Codex can reject an authenticated WebSocket context and request a new
+	// connection. The provider discards the failed socket before this outer retry.
+	"open a new websocket connection and retry",
 
 	// gRPC based providers (e.g. NVIDIA NIM)
 	"ResourceExhausted",

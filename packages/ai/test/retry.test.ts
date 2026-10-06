@@ -42,6 +42,20 @@ describe("provider retry classification", () => {
 		).toBe(true);
 	});
 
+	it("matches Codex guidance to retry on a new WebSocket connection", () => {
+		const errorMessage =
+			"Codex error: The experimental native turn lane could not verify the authenticated WebSocket context. Open a new WebSocket connection and retry.";
+		expect(isRetryableAssistantError(fauxAssistantMessage("", { stopReason: "error", errorMessage }))).toBe(true);
+	});
+
+	it.each([
+		"Codex error: Invalid API key",
+		"Codex error: Authentication failed",
+		"Codex error: The authenticated WebSocket context is invalid.",
+	])("keeps authentication errors without reconnect guidance non-retryable: %s", (errorMessage) => {
+		expect(isRetryableAssistantError(fauxAssistantMessage("", { stopReason: "error", errorMessage }))).toBe(false);
+	});
+
 	it("matches upstream request buffer exhaustion wording", () => {
 		expect(
 			isRetryableAssistantError(
